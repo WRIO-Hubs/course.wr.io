@@ -1,5 +1,8 @@
+var config = require('./config.json')
+
 export default {
   async fetch(request) {
+	console.log("Yas",config.AIRTABLE_API_KEY);
     const html = `
 
 
@@ -6640,7 +6643,7 @@ export default {
 
 			var Airtable = require('airtable');
 			// Get a base ID for an instance of art gallery example
-			var base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE);
+			var base = new Airtable({ apiKey: '${config.AIRTABLE_API_KEY}' }).base('${config.AIRTABLE_BASE}');
 
 			var deleteProject = function(record) {
 					record.destroy(function(err) {

@@ -2,9 +2,6 @@ name = "dashboard-wr-io"
 main = "index.js"
 compatibility_date = "2023-05-10"
 
-[vars]
-AIRTABLE_API_KEY = [PUT YOUR AIRTABLE API KEY]
-AIRTABLE_BASE = [PUT YOUR AIRTABLE BASE]
 
 
 
