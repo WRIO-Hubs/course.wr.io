@@ -1934,7 +1934,7 @@ export default {
 													<!--begin::Body-->
 													<div class="card-body d-flex flex-column justify-content-center align-items-start ps-lg-15">
 														<!--begin::Title-->
-														<h3 class="text-gray-800 d-flex fs-2qx fw-bolder mb-4 mb-lg-8">Take the newcomer course to maximize your use of the BMP Dashboard</h3>
+														<h3 class="text-gray-800 d-flex fs-2qx fw-bolder mb-4 mb-lg-8">!Take the newcomer course to maximize your use of the BMP Dashboard</h3>
 														<!--end::Title-->
 														<!--begin::Action-->
 														<div class="m-0">
