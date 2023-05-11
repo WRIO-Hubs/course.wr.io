@@ -10,7 +10,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
-      - shell:echo "name is ${{ secrets.CF_API_TOKEN }}"
     steps:
       - uses: actions/checkout@v2
       - name: Publish      
