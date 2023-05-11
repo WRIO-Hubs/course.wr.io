@@ -2,7 +2,6 @@ var config = require('./config.json')
 
 export default {
   async fetch(request) {
-	console.log("Yas",config.AIRTABLE_API_KEY);
     const html = `
 
 
