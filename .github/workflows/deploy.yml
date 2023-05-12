@@ -7,14 +7,26 @@ on:
       - main
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     name: Deploy
     steps:
+      - name: Test
+        run: |
+          if [ "$CF_API_KEY" == "fab565013ccd75fbf72bd0b69a2cc16543ae4" ]
+          then
+            echo "Got email"
+          fi
+          if [ "$CF_EMAIL" == "info@webrunes.com" ]
+          then
+            echo "Got secret for email"
+          fi
+        env: 
+          CANDY_SECURE: ${{ secrets.CANY_APPLE_SECURE }}
+          PEAR_SECURE: ${{ secrets.PEAR_MAGIC_SECURE }}    
       - uses: actions/checkout@v2
       - name: Publish      
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiKey: ${{ secrets.CF_API_KEY }}
           email: ${{ secrets.CF_EMAIL }}
-          wranglerVersion: '2.20.0'          
-          preCommands: whoami && echo ${{ secrets.CF_API_KEY }}          
+          wranglerVersion: '2.20.0'         
