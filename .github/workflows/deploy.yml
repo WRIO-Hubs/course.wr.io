@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Test
         run: |
-          if [ "$CF_API_KEY" == "fab565013ccd75fbf72bd0b69a2cc16543ae4" ]
+          if [ "$CF_API_KEY" == "" ]
           then
             echo "Got email"
           fi
