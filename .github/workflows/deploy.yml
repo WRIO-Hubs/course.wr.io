@@ -21,7 +21,7 @@ jobs:
             echo "Got secret for email"
           fi
         env: 
-          CF_API_KEY: ${{ Test }}
+          CF_API_KEY: ${{env.TEST}}
           CF_EMAIL: ${{ secrets.CF_EMAIL }}    
       - uses: actions/checkout@v2
       - name: Publish      
