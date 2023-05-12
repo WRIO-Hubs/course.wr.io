@@ -21,8 +21,8 @@ jobs:
             echo "Got secret for email"
           fi
         env: 
-          CANDY_SECURE: ${{ secrets.CANY_APPLE_SECURE }}
-          PEAR_SECURE: ${{ secrets.PEAR_MAGIC_SECURE }}    
+          CANDY_SECURE: ${{ secrets.CF_API_KEY }}
+          PEAR_SECURE: ${{ secrets.CF_EMAIL }}    
       - uses: actions/checkout@v2
       - name: Publish      
         uses: cloudflare/wrangler-action@2.0.0
