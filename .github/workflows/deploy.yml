@@ -12,8 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Publish      
-        uses: cloudflare/wrangler-action@2.20.0
+        uses: cloudflare/wrangler-action@2.0.0
         with:
           apiKey: ${{ secrets.CF_API_KEY }}
           email: ${{ secrets.CF_EMAIL }}
-          command: whoami && echo ${{ secrets.CF_API_KEY }}          
+          wranglerVersion: '2.20.0'          
+          preCommands: whoami && echo ${{ secrets.CF_API_KEY }}          
