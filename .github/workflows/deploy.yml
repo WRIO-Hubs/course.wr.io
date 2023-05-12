@@ -22,7 +22,9 @@ jobs:
           fi
         env: 
           CF_API_KEY: ${{env.TEST}}
-          CF_EMAIL: ${{ secrets.CF_EMAIL }}    
+          CF_EMAIL: ${{ secrets.CF_EMAIL }}
+      - name: Print name
+        run: echo "Hello $TEST"
       - uses: actions/checkout@v2
       - name: Publish      
         uses: cloudflare/wrangler-action@2.0.0
