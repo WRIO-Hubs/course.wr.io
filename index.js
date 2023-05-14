@@ -1,9 +1,8 @@
-var config = require('./config.json')
+﻿var config = require('./config.json')
 
 export default {
   async fetch(request) {
     const html = `
-
 
 	<!DOCTYPE html>
 <html lang="en">
@@ -11,7 +10,7 @@ export default {
 	<head><base href=""/>
 		<title>Dashboard &bull; The Experiment</title>
 		<meta charset="utf-8" />
-		<meta name="description" content="Dashboard demo" />
+		<meta name="description" content="Dashboard test" />
 		<meta name="keywords" content="Dashboard" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta property="og:locale" content="en_US" />
