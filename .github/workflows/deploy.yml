@@ -32,5 +32,5 @@ jobs:
         with:
           apiKey: ${{ secrets.CF_API_KEY }}
           email: ${{ secrets.CF_EMAIL }}      
-          wranglerVersion: '1.6.0'
-          command: publish --type="webpack"
+          wranglerVersion: '2.0.0'
+          command: publish
