@@ -32,4 +32,5 @@ jobs:
         with:
           apiKey: ${{ secrets.CF_API_KEY }}
           email: ${{ secrets.CF_EMAIL }}      
-          command: publish --env ${{ github.event.inputs.environment }}
+          wranglerVersion: '1.6.0'
+          command: publish
