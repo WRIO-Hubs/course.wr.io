@@ -24,10 +24,18 @@ jobs:
         env: 
           CF_API_KEY: ${{env.TEST}}
           CF_EMAIL: ${{ secrets.CF_EMAIL }}
-      - name: Print name
-        run: echo "Hello $TEST"
-      - uses: actions/checkout@v3
-      - name: Publish      
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+    # Setup npm
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+    # Deploy
+      - name: Deploy via CloudFlare Workers
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
