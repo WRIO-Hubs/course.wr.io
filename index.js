@@ -10,7 +10,7 @@ export default {
 	<head><base href=""/>
 		<title>Dashboard &bull; The Experiment</title>
 		<meta charset="utf-8" />
-		<meta name="description" content="Dashboard test" />
+		<meta name="description" content="Dashboard" />
 		<meta name="keywords" content="Dashboard" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta property="og:locale" content="en_US" />
@@ -1932,7 +1932,7 @@ export default {
 													<!--begin::Body-->
 													<div class="card-body d-flex flex-column justify-content-center align-items-start ps-lg-15">
 														<!--begin::Title-->
-														<h3 class="text-gray-800 d-flex fs-2qx fw-bolder mb-4 mb-lg-8">!1Take the newcomer course to maximize your use of the BMP Dashboard Test</h3>
+														<h3 class="text-gray-800 d-flex fs-2qx fw-bolder mb-4 mb-lg-8">!1Take the newcomer course to maximize your use of the BMP Dashboard</h3>
 														<!--end::Title-->
 														<!--begin::Action-->
 														<div class="m-0">
