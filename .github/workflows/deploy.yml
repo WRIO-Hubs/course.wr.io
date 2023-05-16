@@ -43,4 +43,4 @@ jobs:
           npm uninstall -g @cloudflare/wrangler
           npm install -g wrangler
           ls -l 
-          wrangler publish
+          CF_ACCOUNT_ID=${{secrets.CF_ACCOUNT_ID}} CF_API_TOKEN=${{secrets.CF_API_TOKEN}} wrangler publish
