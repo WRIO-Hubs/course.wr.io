@@ -40,6 +40,9 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          npm uninstall -g @cloudflare/wrangler && npm install -g wrangler
-          npx wrangler build && cd build && ls -l 
+          npm uninstall -g @cloudflare/wrangler
+          npm install -g wrangler
+          npx wrangler build
+          cd build
+          ls -l 
           wrangler publish
