@@ -42,4 +42,4 @@ jobs:
           CF_EMAIL: ${{ secrets.CF_EMAIL }}
         run: |
           npm uninstall -g @cloudflare/wrangler && npm install -g wrangler
-          wrangler publish -e dev
+          wrangler publish  -e dev
