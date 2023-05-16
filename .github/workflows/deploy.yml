@@ -41,5 +41,5 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
           npm uninstall -g @cloudflare/wrangler && npm install -g wrangler@v1.14.0
-          npm run build && cd ./build
+          npm run build && cd build
           wrangler publish
