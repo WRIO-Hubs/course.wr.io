@@ -44,5 +44,5 @@ jobs:
           npm uninstall -g @cloudflare/wrangler && npm install -g wrangler
           ls -l
           cat ./wrangler.toml
-          wrangler publish  -e dev 2> errors.txt
+          wrangler publish  -e dev 2>&1 | tee errors.txt
           cat error.txt
