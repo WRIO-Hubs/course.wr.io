@@ -43,5 +43,5 @@ jobs:
         run: |
           npm uninstall -g @cloudflare/wrangler && npm install -g wrangler
           ls -l
-          cat wranglar.toml
+          cat ./wrangler.toml
           wrangler publish  -e dev
