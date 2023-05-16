@@ -8,7 +8,7 @@ export default {
 <html lang="en">
 	<!--begin::Head-->
 	<head><base href=""/>
-		<title>Dashboard &bull; The Experiment</title>
+		<title>Dashboard &bull; The Experiment Test</title>
 		<meta charset="utf-8" />
 		<meta name="description" content="Dashboard" />
 		<meta name="keywords" content="Dashboard" />
