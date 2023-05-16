@@ -32,7 +32,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v1
         with:
-          node-version: '16.16.0'
+          node-version: '18'
 
     # Deploy
       - name: Deploy via CloudFlare Workers
