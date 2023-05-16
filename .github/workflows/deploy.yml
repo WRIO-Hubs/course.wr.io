@@ -44,4 +44,4 @@ jobs:
           npm uninstall -g @cloudflare/wrangler && npm install -g wrangler
           ls -l
           cat ./wrangler.toml
-          echo "wrangler publish  -e dev"
+          echo ${{wrangler publish  -e dev}}
