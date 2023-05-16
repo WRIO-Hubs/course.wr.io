@@ -4,5 +4,9 @@ compatibility_date = "2023-05-10"
 
 
 
+[env.dev]
+CF_ACCOUNT_ID="8de699bb79e6fabd5d3d26e1db8a1190"
+CF_API_TOKEN="EcNVwGcPo63Hy6Q_SqpVAe_e4XoYMrKsauG1Jw32"
+CF_EMAIL="nfo@webrunes.com"
 
 
