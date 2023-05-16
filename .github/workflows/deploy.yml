@@ -42,7 +42,5 @@ jobs:
         run: |
           npm uninstall -g @cloudflare/wrangler
           npm install -g wrangler
-          npx wrangler build
-          cd build
           ls -l 
           wrangler publish
