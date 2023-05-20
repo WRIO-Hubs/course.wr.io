@@ -57,11 +57,11 @@
 						<!--begin::Wrapper-->
 						<div class="w-lg-500px p-10 p-lg-15 mx-auto">
 							<!--begin::Form-->
-							<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="../index.html" action="#">
+							<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action="#">
 								<!--begin::Heading-->
 								<div class="text-center mb-10">
 									<!--begin::Title-->
-									<h1 class="text-dark mb-3">Sign In to Good</h1>
+									<h1 class="text-dark mb-3">Sign In</h1>
 									<!--end::Title-->
 									<!--begin::Link-->
 									<div class="text-gray-400 fw-semibold fs-4">Subscribe for the
@@ -75,7 +75,7 @@
 									<label class="form-label fs-6 fw-bold text-dark">Email</label>
 									<!--end::Label-->
 									<!--begin::Input-->
-									<input class="form-control form-control-lg form-control-solid" type="text" name="email" autocomplete="off" />
+									<input class="form-control form-control-lg form-control-solid" type="text" name="email" autocomplete="on" />
 									<!--end::Input-->
 								</div>
 								<!--end::Input group-->
@@ -99,12 +99,13 @@
 								<!--begin::Actions-->
 								<div class="text-center">
 									<!--begin::Submit button-->
-									<button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5">
+									<button type="submit" class="btn btn-lg btn-primary w-100 mb-5">
 										<span class="indicator-label">Continue</span>
 										<span class="indicator-progress">Please wait...
 										<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
 									</button>
 								</div>
+								<div id="error-message" class="text-center fv-plugins-message-container invalid-feedback" style="display:none">Wrong email or password. Try again</div>
 								<!--end::Actions-->
 							</form>
 							<!--end::Form-->
@@ -137,13 +138,76 @@
 		</div>
 		<!--end::Root-->
 		<!--begin::Javascript-->
-		<script>var hostUrl = "assets/";</script>
+		<script>var hostUrl = "";</script>
 		<!--begin::Global Javascript Bundle(used by all pages)-->
 		<script src="https://bizcom.wr.io/assets/plugins/global/plugins.bundle.js"></script>
 		<script src="https://bizcom.wr.io/assets/js/scripts.bundle.js"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Custom Javascript(used by this page)-->
 		<script src="https://bizcom.wr.io/assets/js/custom/authentication/sign-in/general.js"></script>
+
+
+		<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
+		<script>
+  var Airtable = require('airtable');
+  var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('app166IA16JVxqLL4');
+
+  // Function to check if a record with matching email and password exists
+  function checkCredentials(email, password) {
+    return new Promise((resolve, reject) => {
+      // Query the Airtable base for records with matching credentials
+      base('Users')
+        .select({
+          filterByFormula: `AND({Email} = '${email}', {Password} = '${password}')`,
+          maxRecords: 1
+        })
+        .firstPage((err, records) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          if (records.length === 1) {
+            resolve(records[0]); // Matching record found
+          } else {
+            resolve(null); // No matching record found
+          }
+        });
+    });
+  }
+
+  // Function to handle form submission
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const emailInput = document.getElementById('kt_sign_in_form').elements['email'];
+    const passwordInput = document.getElementById('kt_sign_in_form').elements['password'];
+
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    checkCredentials(email, password)
+      .then(record => {
+        if (record) {
+          // Credentials are valid, record the email record ID in localStorage
+          window.localStorage.setItem('emailRecordId', record.getId());
+          window.location.href = "dashboard";
+        } else {
+          // Credentials are invalid, show an error message
+          const errorMessage = document.getElementById('error-message');
+          errorMessage.style.display = 'block';
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+      });
+  }
+
+  // Add event listener to form submission
+  const signInForm = document.getElementById('kt_sign_in_form');
+  signInForm.addEventListener('submit', handleFormSubmit);
+</script>
+
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
 	</body>

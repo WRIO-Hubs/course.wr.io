@@ -488,7 +488,7 @@
 							</div>
 							<!--end::User avatar-->
 							<!--begin::Action-->
-							<a href="../authentication/sign-in/basic.html" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
+							<a href="../login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
 								<!--begin::Svg Icon | path: icons/duotune/arrows/arr076.svg-->
 								<span class="svg-icon svg-icon-2 svg-icon-gray-400">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2972,7 +2972,13 @@
 		var Airtable = require('airtable');
 		var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
 
-		base('Users').find('rectnBUnFuTXX8a21', function(err, record) {
+		if ( localStorage.getItem("emailRecordId") == null ) {
+			window.location.href = "../login";
+		}
+
+		var emailRecordId = localStorage.getItem("emailRecordId");
+
+		base('Users').find(emailRecordId, function(err, record) {
 		    if (err) { console.error(err); return; }
 
 				document.getElementById('dashboard_user_name').textContent = record.get('Name');
