@@ -8,44 +8,41 @@
 <script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
 
 <script>
+  var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('app166IA16JVxqLL4');
 
-var Airtable = require('airtable');
-var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
-
-  // Airtable API credentials
-  const apiKey = 'keyTpq0ckgmWts9xZ';
-  const baseId = 'app166IA16JVxqLL4';
+  // Airtable record details
   const table = 'Users';
   const recordId = 'rectnBUnFuTXX8a21';
-  const newFieldValue = '7';
 
   // Function to update a record in Airtable
   function updateAirtableRecord(recordId, newFieldValue) {
-    const url = `https://api.airtable.com/v0/${baseId}/${table}/${recordId}`;
-
-    fetch(url, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+    base(table).update(
+      recordId,
+      {
+        'TwitterFollowers': newFieldValue
       },
-      body: JSON.stringify({
-        fields: {
-          'TwitterFollowers': newFieldValue
+      function(err, record) {
+        if (err) {
+          console.error('Error updating record:', err);
+        } else {
+          console.log('Record updated successfully:', record);
         }
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Record updated successfully:', data);
-    })
-    .catch(error => {
-      console.error('Error updating record:', error);
-    });
+      }
+    );
   }
 
-  // Update the record in Airtable on page load
-  updateAirtableRecord(recordId, newFieldValue);
+  // Listen for postMessage event
+  window.addEventListener('message', function(event) {
+    // Check if the message is from a trusted source
+          const newFieldValue = event.data;
+
+      // Update the record in Airtable
+      updateAirtableRecord(recordId, newFieldValue);
+    if (event.origin === 'http://example.com') {
+      // Get the new field value from the message data
+
+    }
+  });
 </script>
 
 </body>
