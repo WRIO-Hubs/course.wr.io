@@ -14,13 +14,14 @@
 
   // Listen for the POST request
   window.addEventListener('message', function(event) {
-    // Check if the message is from a trusted source
-    if (event.origin === 'http://example.com') {
-      // Get the received data from the message data
-      const receivedData = event.data;
+    const receivedData = event.data;
       
       // Handle the received data
       handlePostRequest(receivedData);
+    // Check if the message is from a trusted source
+    if (event.origin === 'http://example.com') {
+      // Get the received data from the message data
+      
     }
   });
 </script>
