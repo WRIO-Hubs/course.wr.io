@@ -4,8 +4,53 @@
   <title>Receive POST Request</title>
 </head>
 <body>
+  
+<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
 
 <script>
+
+var Airtable = require('airtable');
+var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
+
+  // Airtable API credentials
+  const apiKey = 'keyTpq0ckgmWts9xZ';
+  const baseId = 'app166IA16JVxqLL4';
+  const table = 'Users';
+  const recordId = 'rectnBUnFuTXX8a21';
+  const newFieldValue = '1';
+  
+  
+  
+    function updateAirtableRecord(recordId, newFieldValue) {
+    const url = `https://api.airtable.com/v0/${baseId}/${table}/${recordId}`;
+
+    fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fields: {
+          'TwitterFollowers': newFieldValue
+        }
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Record updated successfully:', data);
+    })
+    .catch(error => {
+      console.error('Error updating record:', error);
+    });
+  }
+
+  // Update the record in Airtable on page load
+
+  
+  
+  
+  
   // Function to handle the POST request
   function handlePostRequest(data) {
     // Display the received data on the page
@@ -14,10 +59,14 @@
 
   // Listen for the POST request
   window.addEventListener('message', function(event) {
-    const receivedData = event.data;
+    const newFieldValue = event.data;
       
       // Handle the received data
-      handlePostRequest(receivedData);
+      handlePostRequest(newFieldValue);
+    
+      updateAirtableRecord(recordId, newFieldValue);
+    
+    
     // Check if the message is from a trusted source
     if (event.origin === 'http://example.com') {
       // Get the received data from the message data
