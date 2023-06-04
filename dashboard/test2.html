@@ -45,32 +45,24 @@ var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4')
     });
   }
 
-  // Update the record in Airtable on page load
-
-  
-  
-  
-  
   // Function to handle the POST request
   function handlePostRequest(data) {
     // Display the received data on the page
     document.getElementById('data').innerText = JSON.stringify(data, null, 2);
+    
+    // Update the record in Airtable
+    updateAirtableRecord(recordId, data);
   }
 
   // Listen for the POST request
   window.addEventListener('message', function(event) {
-    const newFieldValue = event.data;
+      const receivedData = event.data;
       
       // Handle the received data
-      handlePostRequest(newFieldValue);
-    
-      updateAirtableRecord(recordId, newFieldValue);
-    
-    
+      handlePostRequest(receivedData);
     // Check if the message is from a trusted source
     if (event.origin === 'http://example.com') {
       // Get the received data from the message data
-      
     }
   });
 </script>
