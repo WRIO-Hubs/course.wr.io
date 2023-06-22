@@ -1410,75 +1410,31 @@
 		chart.render();
 
 
-		var Airtable = require('airtable');
-		var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
-
-		if ( localStorage.getItem("emailRecordId") == null ) {
-			window.location.href = "../login";
+		if (localStorage.getItem("emailRecordId") == null) {
+		  window.location.href = "../login";
 		}
 
-		var emailRecordId = localStorage.getItem("emailRecordId");
+		const emailRecordId = localStorage.getItem("emailRecordId");
 
-		base('Users').find(emailRecordId, function(err, record) {
-		    if (err) { console.error(err); return; }
-
-				document.getElementById('dashboard_user_name').textContent = record.get('Name');
-				document.getElementById('dashboard_level').textContent = record.get('Level');
-				document.getElementById('dashboard_earned').textContent = record.get('Earned').toLocaleString();
-				document.getElementById('dashboard_clients').textContent = record.get('Clients');
-				document.getElementById('dashboard_words').textContent = record.get('Words');
-
-				const targetDate = new Date(record.get('Registered')); // Set the target date
-				const currentDate = new Date(); // Get the current date
-				const timeDiff = currentDate.getTime() - targetDate.getTime(); // Calculate the time difference in milliseconds
-				const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-				document.getElementById('dashboard_day').textContent = daysDiff;
-
-				//checking if no such day record in LinkedinFollowers and if not, make an record update
-				const matrix_ln_followers = record.get('LinkedinFollowers');
-				const matrixData_ln_followers = {};
-				console.log("LinkedinFollowers:", matrix_ln_followers);
-
-				// Parsing the matrix string and storing values in an object
-				matrix_ln_followers.split(",").forEach((item) => {
-				  const [day, value] = item.split(":");
-				  matrixData_ln_followers[day] = value;
-				});
-
-				// Checking if the given day exists in the matrix
-				if (!matrixData_ln_followers[daysDiff]) {
-					console.log("No such data!");
-					const url = "http://127.0.0.1:90/dashboard/actions/EndOfTheDay/";
-					fetch(url, { mode: "no-cors" })
-					  .then(() => {
-					    console.log("Page opened successfully in the background.");
-					  })
-					  .catch((error) => {
-					    console.error("An error occurred while opening the page:", error);
-					  });
-				} else {
-				  // Day exists in the matrix
-					document.getElementById('dashboard_linkedin_followers').textContent = parseInt(matrixData_ln_followers[daysDiff]).toLocaleString();
-				  console.log("Day", daysDiff, "exists with value", matrixData_ln_followers[daysDiff]);
-				}
-
-
-
-
-				//demo dashboard
-				if (record.get('Level') <= 1) {
-			    document.getElementById('dashboard_note').style.display = 'block';
-					document.getElementById('dashboard_level').textContent = 5;
-					document.getElementById('dashboard_earned').textContent = '3,450';
-					document.getElementById('dashboard_clients').textContent = '8';
-					document.getElementById('dashboard_day').textContent = 101;
-					document.getElementById('dashboard_words').textContent = 650;
-					document.getElementById('dashboard_linkedin_followers').textContent = '5,785';
-					document.getElementById('dashboard_twitter_followers').textContent = '6,120';
-					document.getElementById('dashboard_newsletter_followers').textContent = '3,287';
-			  }
-
-		});
+		fetch('https://your-worker-name.your-account.workers.dev', {
+		  method: 'POST',
+		  headers: {
+		    'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify({ emailRecordId })
+		})
+		  .then(response => response.json())
+		  .then(record => {
+		    document.getElementById('dashboard_user_name').textContent = record.Name;
+		    document.getElementById('dashboard_level').textContent = record.Level;
+		    document.getElementById('dashboard_earned').textContent = record.Earned.toLocaleString();
+		    document.getElementById('dashboard_clients').textContent = record.Clients;
+		    document.getElementById('dashboard_words').textContent = record.Words;
+		  })
+		  .catch(error => {
+		    console.error(error);
+		    // Handle error
+		  });
 
 
 
