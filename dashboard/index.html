@@ -1416,7 +1416,7 @@
 
 		const emailRecordId = localStorage.getItem("emailRecordId");
 
-		fetch('https://your-worker-name.your-account.workers.dev', {
+		fetch('https://dashboard-wr-io.wrio.workers.dev/', {
 		  method: 'POST',
 		  headers: {
 		    'Content-Type': 'application/json'
@@ -1433,6 +1433,7 @@
 		  })
 		  .catch(error => {
 		    console.error(error);
+				console.log("record.Name:" + record.Name);
 		    // Handle error
 		  });
 
