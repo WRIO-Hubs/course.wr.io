@@ -155,18 +155,14 @@
 		<script src="https://bizcom.wr.io/assets/js/custom/authentication/sign-in/general.js"></script>
 
 		<script>
-  const airtableBaseId = 'app166IA16JVxqLL4';
-  const airtableTable = 'Users';
-
   function checkCredentials(email, password) {
-    return fetch(`https://airtable.wrio.workers.dev/?baseId=${airtableBaseId}&table=${airtableTable}&email=${email}`)
-      .then(response => response.json())
+    return fetch(`https://airtable.wrio.workers.dev/?email=${email}&password=${password}`)
+      .then(response => response.text())
       .then(data => {
-        if (data.length === 1 && data[0].Email === email && data[0].Password === password) {
-					return data[0]; // Matching record found
+        if (data === 'true') {
+          return true; // Matching record found
         } else {
-          console.log(data); // Output record details to console
-          return null; // No matching record found
+          return false; // No matching record found
         }
       });
   }
@@ -181,11 +177,10 @@
     const password = passwordInput.value;
 
     checkCredentials(email, password)
-      .then(record => {
-        if (record) {
-          // Credentials are valid, record the email record ID in localStorage
-          window.localStorage.setItem('emailRecordId', record.id);
-          console.log(record); // Output record to console
+      .then(matchFound => {
+        if (matchFound) {
+          // Credentials are valid, record the email in localStorage
+          window.localStorage.setItem('email', email);
           window.location.href = "dashboard";
         } else {
           // Credentials are invalid, show an error message
@@ -211,6 +206,7 @@
   const signInForm = document.getElementById('kt_sign_in_form');
   signInForm.addEventListener('submit', handleFormSubmit);
 </script>
+
 
 
 
