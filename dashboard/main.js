@@ -1,4 +1,4 @@
-fetch('https://airtable.wrio.workers.dev/')
+fetch('https://airtable.wr.io/')
   .then(response => response.json())
   .then(data => {
     // Process the data returned by the Cloudflare Worker
