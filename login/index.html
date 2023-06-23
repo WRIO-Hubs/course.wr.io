@@ -155,52 +155,64 @@
 		<script src="https://bizcom.wr.io/assets/js/custom/authentication/sign-in/general.js"></script>
 
 		<script>
-			const airtableBaseId = 'app166IA16JVxqLL4';
-			const airtableTable = 'Users';
+  const airtableBaseId = 'app166IA16JVxqLL4';
+  const airtableTable = 'Users';
 
-			function checkCredentials(email, password) {
-			  return fetch(`https://airtable.wrio.workers.dev/?baseId=${airtableBaseId}&table=${airtableTable}&field=Email&criteria=${email}`)
-			    .then(response => response.json())
-			    .then(data => {
-			      if (data.length === 1 && data[0].Password === password) {
-			        return data[0]; // Matching record found
-			      } else {
-			        return null; // No matching record found
-			      }
-			    });
-			}
+  function checkCredentials(email, password) {
+    return fetch(`https://airtable.wrio.workers.dev/?baseId=${airtableBaseId}&table=${airtableTable}&email=${email}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length === 1 && data[0].Email === email && data[0].Password === password) {
+					return data[0]; // Matching record found
+        } else {
+          console.log(data); // Output record details to console
+          return null; // No matching record found
+        }
+      });
+  }
 
-			function handleFormSubmit(event) {
-			  event.preventDefault();
+  function handleFormSubmit(event) {
+    event.preventDefault();
 
-			  const emailInput = document.getElementById('kt_sign_in_form').elements['email'];
-			  const passwordInput = document.getElementById('kt_sign_in_form').elements['password'];
+    const emailInput = document.getElementById('kt_sign_in_form').elements['email'];
+    const passwordInput = document.getElementById('kt_sign_in_form').elements['password'];
 
-			  const email = emailInput.value;
-			  const password = passwordInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
-			  checkCredentials(email, password)
-			    .then(record => {
-			      if (record) {
-			        // Credentials are valid, record the email record ID in localStorage
-			        window.localStorage.setItem('emailRecordId', record.id);
-			        window.location.href = "dashboard";
-			      } else {
-			        // Credentials are invalid, show an error message
-			        const errorMessage = document.getElementById('error-message');
-			        errorMessage.style.display = 'block';
-			      }
-			    })
-			    .catch(err => {
-			      console.error('Error:', err);
-			    });
-			}
+    checkCredentials(email, password)
+      .then(record => {
+        if (record) {
+          // Credentials are valid, record the email record ID in localStorage
+          window.localStorage.setItem('emailRecordId', record.id);
+          console.log(record); // Output record to console
+          window.location.href = "dashboard";
+        } else {
+          // Credentials are invalid, show an error message
+          const errorMessage = document.getElementById('error-message');
+          errorMessage.style.display = 'block';
 
-			// Add event listener to form submission
-			const signInForm = document.getElementById('kt_sign_in_form');
-			signInForm.addEventListener('submit', handleFormSubmit);
+          // Fade away the error message after 2 seconds
+          setTimeout(() => {
+            errorMessage.style.opacity = '0';
+            setTimeout(() => {
+              errorMessage.style.display = 'none';
+              errorMessage.style.opacity = '1';
+            }, 500);
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+      });
+  }
 
+  // Add event listener to form submission
+  const signInForm = document.getElementById('kt_sign_in_form');
+  signInForm.addEventListener('submit', handleFormSubmit);
 </script>
+
+
 
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
