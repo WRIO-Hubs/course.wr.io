@@ -212,7 +212,7 @@
 						<!--begin::User-->
 						<div class="app-sidebar-user d-flex flex-stack py-5 px-8">
 							<!--begin::Action-->
-							<a href="../login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
+							<a href="../../login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
 								<!--begin::Svg Icon | path: icons/duotune/arrows/arr076.svg-->
 								<span class="svg-icon svg-icon-2 svg-icon-gray-400">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -951,130 +951,124 @@
 		<!--end::Custom Javascript-->
 
 		<!-- AIRTABLE -->
-		<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
-
 		<script>
 
-		var Airtable = require('airtable');
-		var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
+				if (localStorage.getItem("emailRecordId") == null) {
+					window.location.href = "../login";
+				}
 
-		if ( localStorage.getItem("emailRecordId") == null ) {
-			window.location.href = "../login";
-		}
+				var emailRecordId = localStorage.getItem("emailRecordId");
+				console.log("emailRecordId: " + emailRecordId);
 
-		var emailRecordId = localStorage.getItem("emailRecordId");
+				fetch(`https://course-dashboard.wrio.workers.dev/?emailRecordId=${emailRecordId}`)
+				.then(response => response.json())
+				.then(data => {
+					console.log('Fetched data:', data);
+					if (data.error && data.error === 'Record not found') {
+						console.error("Record not found");
+					} else {
+						customElements.define(
+							'element-dynamic',
+							class extends HTMLElement {
+								constructor() {
+									super();
+									const template = document
+										.getElementById('element-template')
+										.content;
+									const shadowRoot = this.attachShadow({ mode: 'open' });
+									shadowRoot.appendChild(template.cloneNode(true));
+								}
+							}
+						);
 
-		base('Users').find(emailRecordId, function(err, record) {
-		    if (err) { console.error(err); return; }
+						localStorage.setItem('modulesCompletion', data.ModulesCompletion);
+						console.log("ModulesCompletion: " + data.ModulesCompletion);
 
-				customElements.define('element-dynamic',
-					class extends HTMLElement {
-						constructor() {
-							super();
-							const template = document
-								.getElementById('element-template')
-								.content;
-							const shadowRoot = this.attachShadow({mode: 'open'});
-							shadowRoot.appendChild(template.cloneNode(true));
-						}
-					}
-				);
+						console.log("dashboard_level: " + data.Level);
 
-				localStorage.setItem('modulesCompletion', record.get('ModulesCompletion'));
-			  console.log("ModulesCompletion:" + record.get('ModulesCompletion'));
+						fetch(`https://course-modules-content.wrio.workers.dev/?Level=${data.fields.Level}`)
+							.then(response => response.json())
+							.then(records => {
+								console.log('records data:', records);
+								records.forEach(record => {
+									console.log("record: ", record);
+									console.log("record.Description: " + record.Description);
+									console.log("record.Name: " + record.Name);
 
-				//checking if no such module record in ModulesCompletion and if not, make an record update
-				const dashboard_level = record.get('Level');
-				console.log("dashboard_level:", dashboard_level);
+									var $ModulesInfo = $('<element-dynamic>');
 
-				var Airtable = require('airtable');
-				var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('appD539AMhJO8UYrp');
+									if (record.Level !== undefined) {
+										$ModulesInfo.append(
+											$('<div slot="element-image">').html(
+												`<div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded mb-7" style="height: 266px;background-image:url(/assets/media/modules/${
+												record.Level !== undefined ? record.Level : 'no_img'
+												}.jpg)"></div>`
+											)
+										);
+									}
 
-				// Define the table name and the filter condition
-				const tableName = 'Modules';
-				const filterCondition = `Level <= "${dashboard_level}"`;
+									if (record.Name !== undefined) {
+										$ModulesInfo.append($('<div slot="element-name">').text(record.Name));
+									} else {
+										$ModulesInfo.append($('<div slot="element-name">').text('No name'));
+									}
 
-				// Load records from Airtable based on the filter condition
-				base(tableName)
-				  .select({
-				    filterByFormula: filterCondition,
-				  })
-				  .eachPage((records, fetchNextPage) => {
-				    // Process each page of records
-				    records.forEach(record => {
-				      // Perform desired operations with the record
-				      console.log(record); // Print the record fields, adjust as needed
+									if (record.Description !== undefined) {
+										$ModulesInfo.append($('<div slot="element-description">').text(record.Description));
+									} else {
+										$ModulesInfo.append($('<div slot="element-description">').text('No description'));
+									}
 
-							var $ModulesInfo = $('<element-dynamic>');
+									if (record.Lessons !== undefined) {
+										$ModulesInfo.append($('<div slot="element-lessons-qty">').text(record.Lessons.length));
+									} else {
+										$ModulesInfo.append($('<div slot="element-lessons-qty">').text('No data'));
+									}
 
-							if (record.get('Level')!==undefined) {
-								$ModulesInfo.append(
-									$('<div slot="element-image">').html(
-										`<div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded mb-7" style="height: 266px;background-image:url(/assets/media/modules/${
-											record.get('Level') !== undefined ? record.get('Level') : 'no_img'
-										}.jpg)"></div>`
-									)
+									const modulesCompletion = localStorage.getItem('modulesCompletion');
+									const moduleID = record.id;
+									const regex = new RegExp(`${moduleID}:(\\d+);`);
+									const match = modulesCompletion.match(regex);
+									const lessonIndex = match ? parseInt(match[1]) : 0;
+									const lessonsCount = record.Lessons ? record.Lessons.length : 0;
+									const percentageCompleted = lessonsCount > 0 ? ((lessonIndex / lessonsCount) * 100).toFixed(0) : 0;
+									console.log('percentageCompleted:' + percentageCompleted);
+									$ModulesInfo.append(
+										$('<div slot="element-lesson-completion">')
+											.addClass('h-4px w-100 bg-light mb-5')
+											.attr('data-bs-toggle', 'tooltip')
+											.attr('title', `This lesson is ${percentageCompleted}% completed`)
+											.append(
+												$('<div>')
+													.addClass('bg-info rounded h-4px')
+													.attr('role', 'progressbar')
+													.css('width', `${percentageCompleted}%`)
+													.attr('aria-valuenow', percentageCompleted)
+													.attr('aria-valuemin', '0')
+													.attr('aria-valuemax', '100')
+											)
 									);
-							}
 
-							if (record.get('Name')!==undefined) {
-									$ModulesInfo.append($('<div slot="element-name">').text(record.get('Name')));
-							} else {
-									$ModulesInfo.append($('<div slot="element-name">').text('No name'));
-							}
-
-							if (record.get('Description')!==undefined) {
-									$ModulesInfo.append($('<div slot="element-description">').text(record.get('Description')));
-							} else {
-									$ModulesInfo.append($('<div slot="element-description">').text('No description'));
-							}
-
-							if (record.get('Lessons')!==undefined) {
-									$ModulesInfo.append($('<div slot="element-lessons-qty">').text(record.get('Lessons').length));
-							} else {
-									$ModulesInfo.append($('<div slot="element-lessons-qty">').text('No data'));
-							}
-
-							// Calculate the percentage completed for the module
-							const modulesCompletion = localStorage.getItem('modulesCompletion');
-							const moduleID = record.get('Level');
-							const regex = new RegExp(`${moduleID}:(\\d+);`);
-							const match = modulesCompletion.match(regex);
-							const lessonIndex = match ? parseInt(match[1]) : 0;
-							const lessonsCount = record.get('Lessons') ? record.get('Lessons').length : 0;
-							const percentageCompleted = lessonsCount > 0 ? ((lessonIndex / lessonsCount) * 100).toFixed(0) : 0;
-							console.log('percentageCompleted:' + percentageCompleted);
-							$ModulesInfo.append($('<div slot="element-lesson-completion">').addClass('h-4px w-100 bg-light mb-5').attr('data-bs-toggle', 'tooltip').attr('title', `This lesson is ${percentageCompleted}% completed`).append(
-							  $('<div>').addClass('bg-info rounded h-4px').attr('role', 'progressbar').css('width', `${percentageCompleted}%`).attr('aria-valuenow', percentageCompleted).attr('aria-valuemin', '0').attr('aria-valuemax', '100')
-							));
-
-							//var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', record.get('Level')).append($ModulesInfo);
-							var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', 'Lessons').append($ModulesInfo);
-							$link.attr('data-record-id', record.getId());
-							$link.on('click', function() {
-							  //var moduleID = $(this).attr('href');
-							  localStorage.setItem('moduleID', record.get('Level'));
-								console.log('Level:' + record.get('Level'));
+									var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', 'Lessons').append($ModulesInfo);
+									$link.attr('data-record-id', record.id);
+									$link.on('click', function () {
+										localStorage.setItem('moduleID', record.id);
+										console.log('Level: ' + record.id);
+									});
+									$('#Modules').append($link);
+								});
+							})
+							.catch(error => {
+								console.error('Error retrieving module records:', error);
 							});
-							$('#Modules').append($link);
-
-				    });
-
-				    // Fetch the next page of records
-				    fetchNextPage();
-				  }, err => {
-				    if (err) {
-				      console.error('Error retrieving records:', err);
-				      return;
-				    }
-				    console.log('All records loaded successfully.');
-				  });
-
-					//loadModules();
-
-		});
+					}
+				})
+				.catch(error => {
+					console.error('Error retrieving user record:', error);
+				});
 
 		</script>
+
 
 		<!--end::Javascript-->
 		<template id="element-template">
