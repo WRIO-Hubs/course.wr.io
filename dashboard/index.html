@@ -1292,7 +1292,6 @@
 		  }
 
 		  var emailRecordId = localStorage.getItem("emailRecordId");
-		  console.log("emailRecordId: " + emailRecordId);
 
 		  fetch(`https://course-dashboard.wrio.workers.dev/?emailRecordId=${emailRecordId}`)
 		    .then(response => response.json())
@@ -1316,7 +1315,6 @@
 		        // Checking if no such day record in LinkedinFollowers and if not, make a record update
 		        const matrix_ln_followers = record.fields.LinkedinFollowers;
 		        const matrixData_ln_followers = {};
-		        console.log("LinkedinFollowers:", matrix_ln_followers);
 
 		        // Parsing the matrix string and storing values in an object
 		        matrix_ln_followers.split(",").forEach((item) => {
@@ -1326,11 +1324,9 @@
 
 		        // Checking if the given day exists in the matrix
 		        if (!matrixData_ln_followers[daysDiff]) {
-		          console.log("No such data!");
 		        } else {
 		          // Day exists in the matrix
 		          document.getElementById('dashboard_linkedin_followers').textContent = parseInt(matrixData_ln_followers[daysDiff]).toLocaleString();
-		          console.log("Day", daysDiff, "exists with value", matrixData_ln_followers[daysDiff]);
 		        }
 
 		        // Demo dashboard

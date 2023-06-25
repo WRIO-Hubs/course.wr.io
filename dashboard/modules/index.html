@@ -958,12 +958,10 @@
 				}
 
 				var emailRecordId = localStorage.getItem("emailRecordId");
-				console.log("emailRecordId: " + emailRecordId);
 
 				fetch(`https://course-dashboard.wrio.workers.dev/?emailRecordId=${emailRecordId}`)
 				.then(response => response.json())
 				.then(data => {
-					console.log('Fetched data:', data);
 					if (data.error && data.error === 'Record not found') {
 						console.error("Record not found");
 					} else {
@@ -981,19 +979,12 @@
 							}
 						);
 
-						localStorage.setItem('modulesCompletion', data.ModulesCompletion);
-						console.log("ModulesCompletion: " + data.ModulesCompletion);
+						localStorage.setItem('modulesCompletion', data.fields.ModulesCompletion);
 
-						console.log("dashboard_level: " + data.Level);
-
-						fetch(`https://course-modules-content.wrio.workers.dev/?Level=${data.fields.Level}`)
+						fetch(`https://course-modules-lessons.wrio.workers.dev/?Level=${data.fields.Level}`)
 							.then(response => response.json())
 							.then(records => {
-								console.log('records data:', records);
 								records.forEach(record => {
-									console.log("record: ", record);
-									console.log("record.Description: " + record.Description);
-									console.log("record.Name: " + record.Name);
 
 									var $ModulesInfo = $('<element-dynamic>');
 
@@ -1026,13 +1017,13 @@
 									}
 
 									const modulesCompletion = localStorage.getItem('modulesCompletion');
-									const moduleID = record.id;
+									const moduleID = record.Level;
 									const regex = new RegExp(`${moduleID}:(\\d+);`);
 									const match = modulesCompletion.match(regex);
 									const lessonIndex = match ? parseInt(match[1]) : 0;
 									const lessonsCount = record.Lessons ? record.Lessons.length : 0;
 									const percentageCompleted = lessonsCount > 0 ? ((lessonIndex / lessonsCount) * 100).toFixed(0) : 0;
-									console.log('percentageCompleted:' + percentageCompleted);
+
 									$ModulesInfo.append(
 										$('<div slot="element-lesson-completion">')
 											.addClass('h-4px w-100 bg-light mb-5')
@@ -1050,10 +1041,9 @@
 									);
 
 									var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', 'Lessons').append($ModulesInfo);
-									$link.attr('data-record-id', record.id);
+									$link.attr('data-record-id', record.Level);
 									$link.on('click', function () {
-										localStorage.setItem('moduleID', record.id);
-										console.log('Level: ' + record.id);
+										localStorage.setItem('moduleID', record.Level);
 									});
 									$('#Modules').append($link);
 								});

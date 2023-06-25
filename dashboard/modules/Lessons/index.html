@@ -538,257 +538,198 @@
 
 		<!-- AIRTABLE -->
 		<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
-
-
 		<script>
+		  if (localStorage.getItem("emailRecordId") == null) {
+		    window.location.href = "../login";
+		  }
+
+		  customElements.define(
+		    'element-dynamic',
+		    class extends HTMLElement {
+		      constructor() {
+		        super();
+		        const template = document.getElementById('element-template').content;
+		        const shadowRoot = this.attachShadow({ mode: 'open' });
+		        shadowRoot.appendChild(template.cloneNode(true));
+		      }
+		    }
+		  );
+
+		  customElements.define(
+		    'element-dynamic-2',
+		    class extends HTMLElement {
+		      constructor() {
+		        super();
+		        const template = document.getElementById('element-template-2').content;
+		        const shadowRoot = this.attachShadow({ mode: 'open' });
+		        shadowRoot.appendChild(template.cloneNode(true));
+		      }
+		    }
+		  );
+
+		  var emailRecordId = localStorage.getItem('emailRecordId');
+		  var modulesCompletion = localStorage.getItem('modulesCompletion');
+		  var moduleID = localStorage.getItem('moduleID');
+
+		  fetch(`https://course-modules-lessons-content.wrio.workers.dev/api/getModule?Level=${moduleID}`)
+		    .then(response => {
+		      if (!response.ok) {
+		        console.log('Failed to fetch module. Response:', response.status, response.statusText);
+		        throw new Error('Failed to fetch module');
+		      }
+		      return response.json();
+		    })
+		    .then(data => {
+		      const lessonIds = data[0].Lessons;
+		      const lessonIndex = parseInt(modulesCompletion.match(new RegExp(`${moduleID}:(\\d+);`))[1]);
+
+		      const lessonId = lessonIds[lessonIndex]; // Get the lesson ID based on the lessonIndex
+		      if (lessonIndex !== 0) {
+		        document.getElementById('prev').classList.remove('display_none');
+		      }
+		      if (lessonIndex === lessonIds.length) {
+		        document.getElementById('next').style.display = 'none'; // Hide next button
+		        document.getElementById('complete').classList.remove('display_none');
+		        document.getElementById('completed_form').classList.remove('display_none');
+		        var $ModulesInfo = $('<element-dynamic-2>');
+		        $ModulesInfo.append($('<div slot="element-lesson-notice">').text(''));
+		        $('#Lesson').append($ModulesInfo);
+		      }
+
+		      // Navigate to the "/" page on button click
+		      document.getElementById('complete').addEventListener('click', function() {
+		        window.location.href = '../';
+		      });
+
+		      // START retrieving Lessons records
+
+					if (lessonIndex !== lessonIds.length) {
+					  // Start only if the lesson is not completed
+					  // Fetch the lesson record from the specified URL
+						fetch(`https://course-modules-lessons-content.wrio.workers.dev/api/getLesson?lessonId=${lessonId}`)
+							  .then(response => {
+							    if (!response.ok) {
+							      console.log('Failed to fetch lesson record. Response:', response.status, response.statusText);
+							      throw new Error('Failed to fetch lesson record');
+							    }
+							    return response.json();
+							  })
+							  .then(record => {
+
+			            // Update the lesson name in the element
+			            var $ModulesInfo = $('<element-dynamic-2>');
+
+			            if (record.fields.Name !== undefined) {
+			              $ModulesInfo.append($('<div slot="element-lesson-name">').text((lessonIndex + 1) + '. ' + record.fields.Name));
+			            } else {
+			              $ModulesInfo.append($('<div slot="element-lesson-name">').text('No name'));
+			            }
+
+			            if (record.fields.Description !== undefined) {
+			              $ModulesInfo.append($('<div slot="element-lesson-description">').text(record.fields.Description));
+			            } else {
+			              $ModulesInfo.append($('<div slot="element-lesson-description">').text('No description'));
+			            }
+
+			            if (record.fields.URL !== undefined) {
+			              $ModulesInfo.append(
+			                $('<div slot="element-lesson-url">').append(
+			                  $('<a>')
+			                    .attr('href', record.fields.URL)
+			                    .attr('target', '_blank')
+			                    .addClass('btn btn-lg btn-success w-100')
+			                    .text('Read the Lesson')
+			                )
+			              );
+			            } else {
+			              $ModulesInfo.append($('<div slot="element-lesson-url">').text('Something went wrong. Try to reload the page'));
+			            }
+
+			            $('#Lesson').append($ModulesInfo);
+		          })
+		          .catch(error => {
+		            console.error('Error:', error);
+		          });
+		      }
+
+		      // Update modulesCompletion based on button clicks
+		      function updateModulesCompletion(increment) {
+		        const step = increment ? 1 : -1;
+		        const updatedIndex = lessonIndex + step;
+
+		        if (updatedIndex >= 0 && updatedIndex <= lessonIds.length) {
+		          const updatedModulesCompletion = modulesCompletion.replace(
+		            new RegExp(`${moduleID}:${lessonIndex};`),
+		            `${moduleID}:${updatedIndex};`
+		          );
+		          localStorage.setItem('modulesCompletion', updatedModulesCompletion);
+
+		          var Airtable = require('airtable');
+		          var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('app166IA16JVxqLL4');
+
+		          var emailRecordId = localStorage.getItem('emailRecordId');
+
+		          base('Users').find(emailRecordId, function(err, record) {
+		            if (err) {
+		              console.error(err);
+		              return;
+		            }
+		            // Update the modulesCompletion value in the record
+		            record.set('ModulesCompletion', updatedModulesCompletion);
+		            // Save the record back to Airtable
+		            record.save(function(err) {
+		              if (err) {
+		                console.error(err);
+		                return;
+		              }
+
+		              location.reload(); // Reload the page
+		            });
+		          });
+		        }
+		      }
+
+		      // Handle prev button click
+		      document.getElementById('prev').addEventListener('click', function() {
+		        updateModulesCompletion(false); // Decrement the lesson index
+		      });
+
+		      // Handle next button click
+		      document.getElementById('next').addEventListener('click', function() {
+		        updateModulesCompletion(true); // Increment the lesson index
+		      });
+
+		      var $LessonInfo = $('<element-dynamic>');
+		      $LessonInfo.append(
+		        $('<div slot="element-img">').html(
+		          `<div class="d-flex flex-center flex-shrink-0 bg-light rounded w-100px h-100px w-lg-150px h-lg-150px me-7 mb-4" style="background-image:url('/assets/media/modules/${moduleID}.jpg');background-size: 100%;"></div>`
+		        )
+		      );
+
+		      if (data[0].Name !== undefined) {
+		        $LessonInfo.append($('<div slot="element-name">').text(data[0].Name));
+		      } else {
+		        $LessonInfo.append($('<div slot="element-name">').text('No name'));
+		      }
+
+		      if (data[0].Description !== undefined) {
+		        $LessonInfo.append($('<div slot="element-description">').text(data[0].Description));
+		      } else {
+		        $LessonInfo.append($('<div slot="element-description">').text('No description'));
+		      }
+
+		      // Count the number of lessons
+		      var lessonsCount = data[0].Lessons.length;
+		      $LessonInfo.append($('<div slot="element-lessons">').text(lessonsCount || 'No lessons'));
+
+		      $('#Module').append($LessonInfo);
+		    })
+		    .catch(error => {
+		      console.error('Error:', error);
+		    });
+</script>
 
-		if ( localStorage.getItem("emailRecordId") == null ) {
-			window.location.href = "../login";
-		}
 
-		customElements.define('element-dynamic',
-			class extends HTMLElement {
-				constructor() {
-					super();
-					const template = document
-						.getElementById('element-template')
-						.content;
-					const shadowRoot = this.attachShadow({mode: 'open'});
-					shadowRoot.appendChild(template.cloneNode(true));
-				}
-			}
-		);
-
-		customElements.define('element-dynamic-2',
-			class extends HTMLElement {
-				constructor() {
-					super();
-					const template = document
-						.getElementById('element-template-2')
-						.content;
-					const shadowRoot = this.attachShadow({mode: 'open'});
-					shadowRoot.appendChild(template.cloneNode(true));
-				}
-			}
-		);
-
-
-
-
-
-
-		var Airtable = require('airtable');
-		var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('appD539AMhJO8UYrp');
-		const table = base('Modules');
-
-		var emailRecordId = localStorage.getItem("emailRecordId");
-		var modulesCompletion = localStorage.getItem("modulesCompletion");
-		var moduleID = localStorage.getItem("moduleID");
-		console.log("moduleID:" + moduleID);
-		console.log("modulesCompletion:" + modulesCompletion);
-
-		table.select({
-		  filterByFormula: `Level = ${moduleID}`,
-		  maxRecords: 1,
-		}).eachPage((records, fetchNextPage) => {
-		  records.forEach(record => {
-		    console.log("Lessons:" + record.get('Lessons'));
-
-		    // START retrieving Lessons records
-		    var Airtable = require('airtable');
-		    var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('appD539AMhJO8UYrp');
-
-				const lessonIds = record.get('Lessons');
-				const lessonIndex = parseInt(modulesCompletion.match(new RegExp(`${moduleID}:(\\d+);`))[1]);
-
-				const lessonId = lessonIds[lessonIndex]; // Get the lesson ID based on the lessonIndex
-				  console.log("lessonIndex:" + lessonIndex);
-				if (lessonIndex !== 0) {
-					document.getElementById('prev').classList.remove('display_none');
-				}
-				if (lessonIndex === lessonIds.length) {
-
-			  	document.getElementById('next').style.display = 'none'; //hide next button
-
-					document.getElementById('complete').classList.remove('display_none');
-
-					document.getElementById('completed_form').classList.remove('display_none');
-
-					var $ModulesInfo = $('<element-dynamic-2>');
-					$ModulesInfo.append($('<div slot="element-lesson-notice">').text(""));
-
-				  $('#Lesson').append($ModulesInfo);
-
-			}
-
-					// Navigate to the "/" page on button click
-					document.getElementById('complete').addEventListener('click', function() {
-						window.location.href = "../";
-		});
-
-
-		if (lessonIndex !== lessonIds.length) { // starts only if the lessons is not completed
-				// Fetch the lesson record from Airtable based on lessonId
-				base('Lessons').find(lessonId, function(err, lessonRecord) {
-				  if (err) {
-				    console.error(err);
-				    return;
-				  }
-
-				  // Retrieve and log the name of the lesson record
-				  console.log('Lesson Name:', lessonRecord.get('Name'));
-					console.log('Lesson URL:', lessonRecord.get('URL'));
-
-				  // Update the lesson name in the element
-				  var $ModulesInfo = $('<element-dynamic-2>');
-
-				  if (lessonRecord.get('Name') !== undefined) {
-				    $ModulesInfo.append($('<div slot="element-lesson-name">').text((lessonIndex + 1) +". " + lessonRecord.get('Name')));
-				  } else {
-				    $ModulesInfo.append($('<div slot="element-lesson-name">').text('No name'));
-				  }
-
-				  if (lessonRecord.get('Description') !== undefined) {
-				    $ModulesInfo.append($('<div slot="element-lesson-description">').text(lessonRecord.get('Description')));
-				  } else {
-				    $ModulesInfo.append($('<div slot="element-lesson-description">').text('No description'));
-				  }
-
-					if (lessonRecord.get('URL') !== undefined) {
-					  $ModulesInfo.append($('<div slot="element-lesson-url">').append($('<a>').attr('href', lessonRecord.get('URL')).attr('target', '_blank').addClass('btn btn-lg btn-success w-100').text('Read the Lesson')));
-					} else {
-					  $ModulesInfo.append($('<div slot="element-lesson-url">').text('Something went wrong. Try to reload the page'));
-					}
-
-				  $('#Lesson').append($ModulesInfo);
-
-				});
-		}
-
-
-
-
-
-    // Update modulesCompletion based on button clicks
-    function updateModulesCompletion(increment) {
-      const step = increment ? 1 : -1;
-      const updatedIndex = lessonIndex + step;
-
-			if (updatedIndex >= 0 && updatedIndex <= lessonIds.length) {
-        const updatedModulesCompletion = modulesCompletion.replace(
-          new RegExp(`${moduleID}:${lessonIndex};`),
-          `${moduleID}:${updatedIndex};`
-        );
-        localStorage.setItem("modulesCompletion", updatedModulesCompletion);
-        console.log('updatedModulesCompletion:' + updatedModulesCompletion);
-
-
-
-
-				var Airtable = require('airtable');
-				var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('app166IA16JVxqLL4');
-
-				var emailRecordId = localStorage.getItem("emailRecordId");
-
-				base('Users').find(emailRecordId, function(err, record) {
-				  if (err) {
-				    console.error(err);
-				    return;
-				  }
-				  // Update the modulesCompletion value in the record
-				  record.set('ModulesCompletion', updatedModulesCompletion);
-				  // Save the record back to Airtable
-				  record.save(function(err) {
-				    if (err) {
-				      console.error(err);
-				      return;
-				    }
-				    console.log('Record updated successfully');
-
-    				location.reload();// Reload the page
-				  });
-				});
-
-
-
-
-
-
-
-
-
-
-
-      }
-    }
-
-    // Handle prev button click
-    document.getElementById('prev').addEventListener('click', function() {
-      updateModulesCompletion(false); // Decrement the lesson index
-    });
-
-    // Handle next button click
-    document.getElementById('next').addEventListener('click', function() {
-      updateModulesCompletion(true); // Increment the lesson index
-    });
-
-		/* Handle complete button click
-		document.getElementById('complete').addEventListener('click', function() {
-		  updateModulesCompletion(true); // Set updatedIndex to 99
-		});*/
-
-		/*if (lessonIds.length >= lessonIndex) {
-			const lessonId = lessonIds[lessonIndex - 1];
-
-			base('Lessons').find(lessonId, function(err, record) {
-				if (err) {
-					console.error(err);
-					return;
-				}
-
-				// Retrieve and log the name of the lesson record
-				console.log('Lesson Name:', record.get('Name'));
-			});
-		}*/
-
-//END
-
-
-
-
-
-				var $LessonInfo = $('<element-dynamic>');
-
-				$LessonInfo.append($('<div slot="element-img">').html(`<div class="d-flex flex-center flex-shrink-0 bg-light rounded w-100px h-100px w-lg-150px h-lg-150px me-7 mb-4" style="background-image:url('/assets/media/modules/${moduleID}.jpg');background-size: 100%;"></div>`));
-
-				if (record.get('Name')!==undefined) {
-						$LessonInfo.append($('<div slot="element-name">').text(record.get('Name')));
-				} else {
-						$LessonInfo.append($('<div slot="element-name">').text('No name'));
-				}
-
-				if (record.get('Description')!==undefined) {
-						$LessonInfo.append($('<div slot="element-description">').text(record.get('Description')));
-				} else {
-						$LessonInfo.append($('<div slot="element-description">').text('No description'));
-				}
-
-				// Count the number of lessons
-				var lessonsCount = record.fields.Lessons.length;
-				$LessonInfo.append($('<div slot="element-lessons">').text(lessonsCount || 'No lessons'));
-
-				$('#Module').append($LessonInfo);
-
-
-
-
-		  });
-
-
-		});
-
-
-		</script>
 
 		<!--end::Javascript-->
 		<template id="element-template">
