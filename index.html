@@ -172,32 +172,24 @@
 							    <!--end::Action-->
 							  </div>
 
-								<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
-
 							  <script>
-								var Airtable = require('airtable');
-								var base = new Airtable({apiKey: 'keyTpq0ckgmWts9xZ'}).base('app166IA16JVxqLL4');
-
-								function subscribe(email) {
-									base('Subscribers').create([
-										{
-											"fields": {
-												"Email": email,
-											}
-										}
-									], function(err, records) {
-										if (err) {
-											console.error(err);
-											return;
-										}
-										records.forEach(function (record) {
-											console.log(record.getId());
-										});
-									});
-									setTimeout(function() {
-										window.location.href = "thank_you";
-									}, 500);
-								}
+							    function subscribe(email) {
+							      fetch('https://course-subscribe.wrio.workers.dev/?email=' + encodeURIComponent(email))
+							        .then(response => response.text())
+							        .then(data => {
+							          if (data === 'NOT_FOUND') {
+							            console.log('Subscriber not found');
+							          } else {
+							            console.log('Subscriber record ID:', data);
+							          }
+							          setTimeout(function() {
+							            window.location.href = "thank_you";
+							          }, 500);
+							        })
+							        .catch(error => {
+							          console.error('Error creating subscriber:', error);
+							        });
+							    }
 
 							    // Add a click event listener to the button
 							    var button = document.getElementById("kt_coming_soon_submit");
@@ -205,20 +197,19 @@
 							      var emailInput = document.getElementById('emailInput').value;
 							      if (isValidEmail(emailInput)) {
 							        // Execute existing functionality
-											subscribe(emailInput);
+							        subscribe(emailInput);
 							      }
 							    });
 
-
-									// Add a submit event listener to the form
+							    // Add a submit event listener to the form
 							    var form = document.getElementById("kt_coming_soon_form");
 							    form.addEventListener("submit", function(event) {
 							      event.preventDefault(); // Prevent form from submitting normally
 
 							      var emailInput = document.getElementById('emailInput').value;
 							      if (isValidEmail(emailInput)) {
-											// Execute existing functionality
-											subscribe(emailInput);
+							        // Execute existing functionality
+							        subscribe(emailInput);
 							      }
 							    });
 
@@ -230,6 +221,7 @@
 							  </script>
 							  <!--end::Input group-->
 							</form>
+
 							<!--end::Form-->
 							<br>
 							<img src="/assets/media/price.png" class="" alt="" /></div>
