@@ -985,7 +985,7 @@
 									$OutcomesInfo.append(
 										$('<div slot="element-image">').html(
 											`<div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded mb-7" style="height: 266px;background-image:url(${
-											record.ImgURL !== undefined ? record.ImgURL : '/assets/media/outcomes/no_img.jpg'
+											record.ImgURL !== undefined ? record.ImgURL : '/assets/media/no_img.jpg'
 											})"></div>`
 										)
 									);
@@ -1003,11 +1003,9 @@
 									$OutcomesInfo.append($('<div slot="element-description">').text('No description'));
 								}
 
-								var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', 'Lessons').append($OutcomesInfo);
-								$link.attr('data-record-id', record.Level);
-								$link.on('click', function () {
-									localStorage.setItem('moduleID', record.Level);
-								});
+								var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block" target="_blank">').attr('href', `${
+								record.URL !== undefined ? record.URL : '#'
+								}`).append($OutcomesInfo);
 								$('#Outcomes').append($link);
 
 		            // Access other fields from the record as needed
@@ -1041,9 +1039,8 @@
 						<!--begin::Info-->
 						<div class="d-flex flex-wrap mb-5">
 							<!--begin::Due-->
-							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-7 mb-3">
-								<div class="fs-6 text-gray-800 fw-bold"><slot name="element-lessons-qty"></slot></div>
-								<div class="fw-semibold text-gray-400">Lessons</div>
+							<div class="card-toolbar">
+								<span class="badge badge-light-primary fw-bold me-auto px-4 py-3">Notion Template</span>
 							</div>
 							<!--end::Due-->
 						</div>
