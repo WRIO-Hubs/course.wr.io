@@ -243,6 +243,7 @@
 										<div id="kt_project_users_card_pane" class="tab-pane fade show active">
 										<!--begin::Row-->
 										<div class="row g-6 g-xl-9">
+											<div id="loadingSpinner" class="spinner"></div>
 											<div class="row g-6" id="Outcomes"></div>
 										</div>
 										<!--end::Row-->
@@ -945,6 +946,12 @@
 
 		<!-- AIRTABLE -->
 		<script>
+
+		  // Get the reference to the spinner element
+		  const loadingSpinner = document.getElementById("loadingSpinner");
+		  // Show the spinner before making the request
+		  loadingSpinner.style.display = "block";
+
 		  if (localStorage.getItem("emailRecordId") == null) {
 		    window.location.href = "../login";
 		  }
@@ -957,6 +964,8 @@
 		      if (data.error && data.error === 'Record not found') {
 		        console.error("Record not found");
 		      } else {
+
+						loadingSpinner.style.display = "none";
 
 						customElements.define(
 							'element-dynamic',
@@ -1017,6 +1026,9 @@
 		    })
 		    .catch(err => {
 		      console.error('Error:', err);
+
+					loadingSpinner.style.display = "none";
+
 		    });
 		</script>
 

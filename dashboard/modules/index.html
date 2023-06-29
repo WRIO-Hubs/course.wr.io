@@ -250,6 +250,7 @@
 										<div id="kt_project_users_card_pane" class="tab-pane fade show active">
 										<!--begin::Row-->
 										<div class="row g-6 g-xl-9">
+											<div id="loadingSpinner" class="spinner"></div>
 											<div class="row g-6" id="Modules"></div>
 										</div>
 										<!--end::Row-->
@@ -953,6 +954,11 @@
 		<!-- AIRTABLE -->
 		<script>
 
+				// Get the reference to the spinner element
+				const loadingSpinner = document.getElementById("loadingSpinner");
+				// Show the spinner before making the request
+				loadingSpinner.style.display = "block";
+
 				if (localStorage.getItem("emailRecordId") == null) {
 					window.location.href = "../login";
 				}
@@ -985,6 +991,8 @@
 							.then(response => response.json())
 							.then(records => {
 								records.forEach(record => {
+//console.log("record: " + record);
+									loadingSpinner.style.display = "none";
 
 									var $ModulesInfo = $('<element-dynamic>');
 
@@ -1010,10 +1018,16 @@
 										$ModulesInfo.append($('<div slot="element-description">').text('No description'));
 									}
 
+									if (record.Level !== undefined) {
+										$ModulesInfo.append($('<div slot="element-module-number">').text(record.Level));
+									} else {
+										$ModulesInfo.append($('<div slot="element-module-number">').text('No data'));
+									}
+
 									if (record.Lessons !== undefined) {
 										$ModulesInfo.append($('<div slot="element-lessons-qty">').text(record.Lessons.length));
 									} else {
-										$ModulesInfo.append($('<div slot="element-lessons-qty">').text('No data'));
+										$ModulesInfo.append($('<div slot="element-lessons-qty">').text('COMING'));
 									}
 
 									const modulesCompletion = localStorage.getItem('modulesCompletion');
@@ -1040,7 +1054,8 @@
 											)
 									);
 
-									var $link = $('<a href="#" class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', 'Lessons').append($ModulesInfo);
+									var linkHref = lessonsCount !== 0 ? 'Lessons' : '#';
+									var $link = $('<a class="col-sm-6 col-xxl-4" style="display:inline-block">').attr('href', linkHref).append($ModulesInfo);
 									$link.attr('data-record-id', record.Level);
 									$link.on('click', function () {
 										localStorage.setItem('moduleID', record.Level);
@@ -1050,6 +1065,7 @@
 							})
 							.catch(error => {
 								console.error('Error retrieving module records:', error);
+								loadingSpinner.style.display = "none";
 							});
 					}
 				})
@@ -1076,12 +1092,18 @@
 						<!--end::Description-->
 						<!--begin::Info-->
 						<div class="d-flex flex-wrap mb-5">
-							<!--begin::Due-->
+							<!--begin::Module#-->
+							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-7 mb-3">
+								<div class="fs-6 text-gray-800 fw-bold"><slot name="element-module-number"></slot></div>
+								<div class="fw-semibold text-gray-400">Module #</div>
+							</div>
+							<!--end::Module#-->
+							<!--begin::Lessons-->
 							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-7 mb-3">
 								<div class="fs-6 text-gray-800 fw-bold"><slot name="element-lessons-qty"></slot></div>
 								<div class="fw-semibold text-gray-400">Lessons</div>
 							</div>
-							<!--end::Due-->
+							<!--end::Lessons-->
 						</div>
 						<!--end::Info-->
 						<!--begin::Progress-->

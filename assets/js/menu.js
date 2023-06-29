@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Create an array of menu items
   const menuItems = [
     { title: 'Dashboard', link: '/dashboard' },
-    { title: 'Actions', link: '/dashboard/actions' },
+    { title: 'Actions', link: '/dashboard/actions', disabled: true },
     { title: 'Modules', link: '/dashboard/modules' },
     { title: 'Outcomes', link: '/dashboard/outcomes' },
     { title: 'Extras', link: '/dashboard/extras', disabled: true },
