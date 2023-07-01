@@ -366,7 +366,7 @@
 						<!--begin::User-->
 						<div class="app-sidebar-user d-flex flex-stack py-5 px-8">
 							<!--begin::Action-->
-							<a href="../login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
+							<a href="/login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
 								<!--begin::Svg Icon | path: icons/duotune/arrows/arr076.svg-->
 								<span class="svg-icon svg-icon-2 svg-icon-gray-400">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -537,10 +537,9 @@
 		<!--end::Custom Javascript-->
 
 		<!-- AIRTABLE -->
-		<script type="text/javascript" src="https://bizcom.wr.io/assets/js/airtable.browser.js"></script>
 		<script>
 		  if (localStorage.getItem("emailRecordId") == null) {
-		    window.location.href = "../login";
+		    window.location.href = "/login";
 		  }
 
 		  customElements.define(
@@ -631,19 +630,24 @@
 			              $ModulesInfo.append($('<div slot="element-lesson-description">').text('No description'));
 			            }
 
-			            if (record.fields.URL !== undefined) {
-			              $ModulesInfo.append(
-			                $('<div slot="element-lesson-url">').append(
-			                  $('<a>')
-			                    .attr('href', record.fields.URL)
-			                    .attr('target', '_blank')
-			                    .addClass('btn btn-lg btn-success w-100')
-			                    .text('Read the Lesson')
-			                )
-			              );
-			            } else {
-			              $ModulesInfo.append($('<div slot="element-lesson-url">').text('Something went wrong. Try to reload the page'));
-			            }
+									if (record.fields.URL !== undefined) {
+									  var url = record.fields.URL;
+									  if (!/^https?:\/\//i.test(url)) {
+									    url = 'https://' + url;
+									  }
+
+									  $ModulesInfo.append(
+									    $('<div slot="element-lesson-url">').append(
+									      $('<a>')
+									        .attr('href', url)
+									        .attr('target', '_blank')
+									        .addClass('btn btn-lg btn-success w-100')
+									        .text('Read the Lesson')
+									    )
+									  );
+									} else {
+									  $ModulesInfo.append($('<div slot="element-lesson-url">').text('Something went wrong. Try to reload the page'));
+									}
 
 			            $('#Lesson').append($ModulesInfo);
 		          })
@@ -658,34 +662,23 @@
 		        const updatedIndex = lessonIndex + step;
 
 		        if (updatedIndex >= 0 && updatedIndex <= lessonIds.length) {
-		          const updatedModulesCompletion = modulesCompletion.replace(
+		          var updatedModulesCompletion = modulesCompletion.replace(
 		            new RegExp(`${moduleID}:${lessonIndex};`),
 		            `${moduleID}:${updatedIndex};`
 		          );
 		          localStorage.setItem('modulesCompletion', updatedModulesCompletion);
 
-		          var Airtable = require('airtable');
-		          var base = new Airtable({ apiKey: 'keyTpq0ckgmWts9xZ' }).base('app166IA16JVxqLL4');
-
-		          var emailRecordId = localStorage.getItem('emailRecordId');
-
-		          base('Users').find(emailRecordId, function(err, record) {
-		            if (err) {
-		              console.error(err);
-		              return;
-		            }
-		            // Update the modulesCompletion value in the record
-		            record.set('ModulesCompletion', updatedModulesCompletion);
-		            // Save the record back to Airtable
-		            record.save(function(err) {
-		              if (err) {
-		                console.error(err);
-		                return;
+							fetch(`https://course-modules-lessons-content.wrio.workers.dev/api/newModulesCompletion?emailRecordId=${emailRecordId}&updatedModulesCompletion=${updatedModulesCompletion}`)
+		            .then(response => {
+		              if (!response.ok) {
+		                console.log('Failed to update modules completion. Response:', response.status, response.statusText);
+		                throw new Error('Failed to update modules completion');
 		              }
-
 		              location.reload(); // Reload the page
+		            })
+		            .catch(error => {
+		              console.error('Error:', error);
 		            });
-		          });
 		        }
 		      }
 

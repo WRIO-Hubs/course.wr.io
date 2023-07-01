@@ -212,7 +212,7 @@
 						<!--begin::User-->
 						<div class="app-sidebar-user d-flex flex-stack py-5 px-8">
 							<!--begin::Action-->
-							<a href="../../login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
+							<a href="/login" class="btn btn-icon btn-active-color-primary btn-icon-custom-color me-n4" data-bs-toggle="tooltip" title="End session and singout">
 								<!--begin::Svg Icon | path: icons/duotune/arrows/arr076.svg-->
 								<span class="svg-icon svg-icon-2 svg-icon-gray-400">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -960,7 +960,7 @@
 				loadingSpinner.style.display = "block";
 
 				if (localStorage.getItem("emailRecordId") == null) {
-					window.location.href = "../login";
+					window.location.href = "/login";
 				}
 
 				var emailRecordId = localStorage.getItem("emailRecordId");
@@ -985,13 +985,17 @@
 							}
 						);
 
+						if (data.fields.ModulesCompletion == undefined){
+							data.fields.ModulesCompletion = '0:0;1:0;';
+						}
+
 						localStorage.setItem('modulesCompletion', data.fields.ModulesCompletion);
 
 						fetch(`https://course-modules-lessons.wrio.workers.dev/?Level=${data.fields.Level}`)
 							.then(response => response.json())
 							.then(records => {
 								records.forEach(record => {
-//console.log("record: " + record);
+
 									loadingSpinner.style.display = "none";
 
 									var $ModulesInfo = $('<element-dynamic>');
