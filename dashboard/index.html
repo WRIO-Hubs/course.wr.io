@@ -1317,10 +1317,12 @@
 		        const matrixData_ln_followers = {};
 
 		        // Parsing the matrix string and storing values in an object
-		        matrix_ln_followers.split(",").forEach((item) => {
-		          const [day, value] = item.split(":");
-		          matrixData_ln_followers[day] = value;
-		        });
+						if (record.fields.matrix_ln_followers) {
+			        matrix_ln_followers.split(",").forEach((item) => {
+			          const [day, value] = item.split(":");
+			          matrixData_ln_followers[day] = value;
+			        });
+						}
 
 		        // Checking if the given day exists in the matrix
 		        if (!matrixData_ln_followers[daysDiff]) {
