@@ -123,22 +123,32 @@
 			<!--end::Header Section-->
 
 
-				<!--begin::Title-->
-				<h3 class="fs-lg-3tx fs-3x text-dark text-center lh-base position-relative z-index-2" data-kt-scroll-offset="{default: 100, lg: 150}"></h3>
-				<!--end::Title-->
+			<!--begin::Title-->
+			<h3 class="fs-lg-3tx fs-3x text-dark text-center lh-base position-relative z-index-2" data-kt-scroll-offset="{default: 100, lg: 150}"></h3>
+			<!--end::Title-->
 			<!--begin::Coming soon-->
 			<div class="container d-flex flex-column flex-center">
 				<div class="py-5">
-	            <!--begin::Information--><div class="d-flex align-items-center rounded py-5 px-5 bg-light-info">    <!--begin::Icon-->	  <!--begin::Svg Icon | path: icons/duotune/general/gen044.svg-->
-	<span class="svg-icon svg-icon-3x svg-icon-info me-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-	<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"></rect>
-	<rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="currentColor"></rect>
-	<rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor"></rect>
-	</svg>
-	</span>
-	<!--end::Svg Icon-->    <!--end::Icon-->    <!--begin::Description-->    <div class="text-gray-700 fw-bold fs-6">
-	                Secure your pre-access to the <a href="https://bizcom.wr.io/" target="_blank">service</a> by joining our course today!
-	                </div>    <!--end::Description--></div><!--end::Information-->        </div>
+          <!--begin::Information-->
+					<div class="d-flex align-items-center rounded py-5 px-5 bg-light-info">
+						<!--begin::Icon-->
+						<!--begin::Svg Icon | path: icons/duotune/general/gen044.svg-->
+						<span class="svg-icon svg-icon-3x svg-icon-info me-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"></rect>
+						<rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="currentColor"></rect>
+						<rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor"></rect>
+						</svg>
+						</span>
+						<!--end::Svg Icon-->
+						<!--end::Icon-->
+						<!--begin::Description-->
+						<div class="text-gray-700 fw-bold fs-6">
+		          Secure your pre-access to the <a href="https://bizcom.wr.io/" target="_blank">service</a> by joining our course today!
+				    </div>
+					<!--end::Description-->
+					</div>
+					<!--end::Information-->
+				</div>
 			</div>
 			<!--end::Coming soon-->
 			<!--begin::Features section-->
@@ -153,17 +163,17 @@
 							<!--begin::Title-->
 							<div class="fs-lg-3tx fs-2x fw-bold text-white pt-lg-20 mt-lg-4 mb-lg-20 mb-10 pb-2 position-relative z-index-2">
 								<span class="d-block mb-8">The Big Wins of a Small Business Owner</span>
-								<h1 class="fs-lg px-20 fw-bold text-gray-900 mb-7 lh-base">A Step-by-Step Evergreen Simple but Effective Strategies to Launching, Automating, and Optimizing Your Business with Community Building</h1>
+								<h1 class="fs-lg px-20 fw-bold text-gray-900 mb-7 lh-base">A Step-by-Step Evergreen Simple but Effective Strategy for Launching, Automating, and Optimizing Your Business with Community Building</h1>
 							<!--begin::Form-->
 							<br>
-							<form class="form fv-row" id="kt_coming_soon_form">
+							<form class="form fv-row" id="kt_form">
 							  <!--begin::Input group-->
 							  <div id="emailForm" class="d-flex flex-center">
 							    <!--begin::Input-->
 							    <input id="emailInput" class="form-control form-control-lg form-control-solid w-md-250px m-2" type="email" name="email" placeholder="Email Address" autocomplete="off" required />
 							    <!--end::Input-->
 							    <!--begin::Action-->
-							    <button type="button" id="kt_coming_soon_submit" class="btn btn-lg btn-danger fw-bold m-2 text-nowrap">
+							    <button type="button" id="kt_submit" class="btn btn-lg btn-danger fw-bold m-2 text-nowrap">
 							      <span class="indicator-label">Get great value at no cost</span>
 							      <span class="indicator-progress">Please wait...
 							        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -192,23 +202,25 @@
 							    }
 
 							    // Add a click event listener to the button
-							    var button = document.getElementById("kt_coming_soon_submit");
+							    var button = document.getElementById("kt_submit");
 							    button.addEventListener("click", function(event) {
 							      var emailInput = document.getElementById('emailInput').value;
 							      if (isValidEmail(emailInput)) {
 							        // Execute existing functionality
+											document.getElementById("kt_submit").disabled = true;
 							        subscribe(emailInput);
 							      }
 							    });
 
 							    // Add a submit event listener to the form
-							    var form = document.getElementById("kt_coming_soon_form");
+							    var form = document.getElementById("kt_form");
 							    form.addEventListener("submit", function(event) {
 							      event.preventDefault(); // Prevent form from submitting normally
 
 							      var emailInput = document.getElementById('emailInput').value;
 							      if (isValidEmail(emailInput)) {
 							        // Execute existing functionality
+											document.getElementById("kt_submit").disabled = true;
 							        subscribe(emailInput);
 							      }
 							    });
