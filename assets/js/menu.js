@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { title: 'Dashboard', link: '/dashboard' },
     { title: 'Actions', link: '/dashboard/actions', disabled: true },
     { title: 'Modules', link: '/dashboard/modules' },
-    { title: 'Outcomes', link: '/dashboard/outcomes' },
+    { title: 'Worksheets', link: '/dashboard/worksheets' },
     { title: 'Extras', link: '/dashboard/extras', disabled: true },
     { title: 'Mastermind', link: '#', disabled: true },
     { title: '1:1 Consulting', link: '#', disabled: true },
